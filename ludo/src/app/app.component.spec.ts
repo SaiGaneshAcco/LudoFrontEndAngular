@@ -47,4 +47,6 @@ describe('AppComponent', () => {
     expect(checkBlueTurn).toBe(true);
   }); */
 
+  //onClick="()=>console.log('f')"
+
 });
