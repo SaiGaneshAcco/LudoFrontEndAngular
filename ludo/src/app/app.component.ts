@@ -1,5 +1,4 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { Component } from '@angular/core';
 import { LudoService } from './ludo.service';
 @Component({
   selector: 'app-root',
@@ -67,23 +66,21 @@ export class AppComponent {
     this.yellow_current,
   ];
 
-  diceVal!:number
+  diceVal!: number;
   movePiece() {
     let dice = this.ludoService.diceValue();
-    this.diceVal=dice;
+    this.diceVal = dice;
     if (this.blue_turn) {
-      if(dice==6 && this.blue_current==this.blue_start) {
-
+      if (dice == 6 && this.blue_current == this.blue_start) {
       }
       let cellName;
       console.log('Blue Dice value = ' + dice);
       if (this.distance_traveled[0] + dice > 50) {
         return this.checkHome(0, dice);
-      }else {
+      } else {
         cellName = this.cellList[this.prev_val[0]];
         document.getElementById(cellName)!.innerHTML = '';
       }
-
 
       this.blue_current = (this.blue_current + dice) % 52;
 
@@ -99,22 +96,16 @@ export class AppComponent {
     }
     if (this.red_turn) {
       let dice = this.ludoService.diceValue();
-      let cellName ;
+      let cellName;
       console.log('Red Dice value = ' + dice);
 
-      if (this.distance_traveled[1] > 50 && this.distance_traveled[1] <= 56) {
-        cellName = this.ludoService.redHomePath[this.distance_traveled[1]];
-        document.getElementById(cellName)!.innerHTML = '';
-      } else if (this.distance_traveled[1] + dice > 56) {
-        return;
+      if (this.distance_traveled[1] + dice > 50) {
+        return this.checkHome(1, dice);
       } else {
         cellName = this.cellList[this.prev_val[1]];
         document.getElementById(cellName)!.innerHTML = '';
       }
 
-      if (this.distance_traveled[1] + dice > 50) {
-        return this.checkHome(1, dice);
-      }
       this.red_current = (this.red_current + dice) % 52;
       this.distance_traveled[1] += dice;
       cellName = this.cellList[this.red_current];
@@ -128,22 +119,16 @@ export class AppComponent {
     }
     if (this.green_turn) {
       let dice = this.ludoService.diceValue();
-      let cellName ;
+      let cellName;
 
       console.log('Green Dice value = ' + dice);
-      if (this.distance_traveled[2] > 50 && this.distance_traveled[2] < 56) {
-        cellName = this.ludoService.greenHomePath[this.distance_traveled[2]];
-        document.getElementById(cellName)!.innerHTML = '';
-      } else if (this.distance_traveled[2] + dice > 56) {
-        return;
+      if (this.distance_traveled[2] + dice > 50) {
+        return this.checkHome(2, dice);
       } else {
         cellName = this.cellList[this.prev_val[2]];
         document.getElementById(cellName)!.innerHTML = '';
       }
 
-      if (this.distance_traveled[2] + dice > 50) {
-        return this.checkHome(2, dice);
-      }
       this.green_current = (this.green_current + dice) % 52;
       this.distance_traveled[2] += dice;
       cellName = this.cellList[this.green_current];
@@ -157,22 +142,16 @@ export class AppComponent {
     }
     if (this.yellow_turn) {
       let dice = this.ludoService.diceValue();
-      let cellName ;
+      let cellName;
 
       console.log('Yellow Dice value = ' + dice);
-      if (this.distance_traveled[3] > 50 && this.distance_traveled[3]  < 56) {
-        cellName = this.ludoService.yellowHomePath[this.distance_traveled[3] ];
-        document.getElementById(cellName)!.innerHTML = '';
-      } else if (this.distance_traveled[3]  + dice > 56) {
-        return;
+      if (this.distance_traveled[3] + dice > 50) {
+        return this.checkHome(3, dice);
       } else {
         cellName = this.cellList[this.prev_val[3]];
         document.getElementById(cellName)!.innerHTML = '';
       }
 
-      if (this.distance_traveled[3] + dice > 50) {
-        return this.checkHome(3, dice);
-      }
       this.yellow_current = (this.yellow_current + dice) % 52;
       this.distance_traveled[3] += dice;
       cellName = this.cellList[this.yellow_current];
@@ -198,91 +177,119 @@ export class AppComponent {
       } else if (cellCount == 56) {
         this.buttonEnabled = !this.buttonEnabled;
         newCellName = this.ludoService.blueHomePath[this.distance_traveled[0]];
-        document.getElementById(newCellName)!.innerHTML = "";
-        setTimeout(()=>{
+        document.getElementById(newCellName)!.innerHTML = '';
+        setTimeout(() => {
           alert('Player 1 wins');
-        },500);
-
+        }, 500);
       } else {
-        if(this.distance_traveled[0]>50){
-          newCellName = this.ludoService.blueHomePath[this.distance_traveled[0]];
-        document.getElementById(newCellName)!.innerHTML = "";
-        }
-        else{
-          newCellName = this.cellList[this.distance_traveled[0]];
-          document.getElementById(newCellName)!.innerHTML = "";
+        if (this.distance_traveled[0] > 50) {
+          newCellName =
+            this.ludoService.blueHomePath[this.distance_traveled[0]];
+          document.getElementById(newCellName)!.innerHTML = '';
+        } else {
+          newCellName = this.cellList[this.prev_val[0]];
+          document.getElementById(newCellName)!.innerHTML = '';
         }
         this.distance_traveled[0] = cellCount;
         newCellName = this.ludoService.blueHomePath[cellCount];
         document.getElementById(newCellName)!.innerHTML = this.blue_span_ele;
         this.prev_val[0] = cellCount;
       }
-      this.distance_traveled[0]=cellCount;
+      this.distance_traveled[0] = cellCount;
     }
     if (c == 1) {
       let cellCount = this.distance_traveled[1] + dice;
+      let newCellName;
       this.red_turn = false;
       this.green_turn = true;
       if (cellCount > 56) {
         return;
       } else if (cellCount == 56) {
         this.buttonEnabled = !this.buttonEnabled;
-        let newCellName = this.ludoService.blueHomePath[this.distance_traveled[1]];
-        document.getElementById(newCellName)!.innerHTML = "";
-        setTimeout(()=>{
+        newCellName =
+          this.ludoService.redHomePath[this.distance_traveled[1]];
+        document.getElementById(newCellName)!.innerHTML = '';
+        setTimeout(() => {
           alert('Player 2 wins');
-        },500);
+        }, 500);
       } else {
+        if (this.distance_traveled[1] > 50) {
+        newCellName =
+          this.ludoService.redHomePath[this.distance_traveled[1]];
+        document.getElementById(newCellName)!.innerHTML = '';
+      } else {
+        newCellName = this.cellList[this.prev_val[1]];
+        document.getElementById(newCellName)!.innerHTML = '';
+      }
         this.distance_traveled[1] = cellCount;
-        let newCellName = this.ludoService.redHomePath[cellCount];
+        newCellName = this.ludoService.redHomePath[cellCount];
         document.getElementById(newCellName)!.innerHTML = this.red_span_ele;
         this.prev_val[1] = cellCount;
       }
-      this.distance_traveled[1]=cellCount;
+      this.distance_traveled[1] = cellCount;
     }
     if (c == 2) {
       let cellCount = this.distance_traveled[2] + dice;
       this.green_turn = false;
       this.yellow_turn = true;
+      let newCellName;
       if (cellCount > 56) {
         return;
       } else if (cellCount == 56) {
         this.buttonEnabled = !this.buttonEnabled;
-        let newCellName = this.ludoService.blueHomePath[this.distance_traveled[2]];
-        document.getElementById(newCellName)!.innerHTML = "";
-        setTimeout(()=>{
+        newCellName =
+          this.ludoService.greenHomePath[this.distance_traveled[2]];
+        document.getElementById(newCellName)!.innerHTML = '';
+        setTimeout(() => {
           alert('Player 3 wins');
-        },500);
+        }, 500);
       } else {
+        if (this.distance_traveled[2] > 50) {
+          newCellName =
+            this.ludoService.greenHomePath[this.distance_traveled[2]];
+          document.getElementById(newCellName)!.innerHTML = '';
+        } else {
+          newCellName = this.cellList[this.prev_val[2]];
+          document.getElementById(newCellName)!.innerHTML = '';
+        }
         this.distance_traveled[2] = cellCount;
-        let newCellName = this.ludoService.greenHomePath[cellCount];
+        newCellName = this.ludoService.greenHomePath[cellCount];
         document.getElementById(newCellName)!.innerHTML = this.green_span_ele;
         this.prev_val[2] = cellCount;
       }
-      this.distance_traveled[2]=cellCount;
+      this.distance_traveled[2] = cellCount;
     }
     if (c == 3) {
       let cellCount = this.distance_traveled[3] + dice;
       this.yellow_turn = false;
       this.blue_turn = true;
+      let newCellName;
       if (cellCount > 56) {
         return;
       } else if (cellCount == 56) {
         this.buttonEnabled = !this.buttonEnabled;
-        let newCellName = this.ludoService.blueHomePath[this.distance_traveled[3]];
-        document.getElementById(newCellName)!.innerHTML = "";
-        setTimeout(()=>{
+        newCellName =
+          this.ludoService.yellowHomePath[this.distance_traveled[3]];
+        document.getElementById(newCellName)!.innerHTML = '';
+        setTimeout(() => {
           alert('Player 4 wins');
-        },500);
+        }, 500);
       } else {
+        if (this.distance_traveled[3] > 50) {
+          newCellName =
+            this.ludoService.yellowHomePath[this.distance_traveled[3]];
+          document.getElementById(newCellName)!.innerHTML = '';
+        } else {
+          newCellName = this.cellList[this.prev_val[3]];
+          document.getElementById(newCellName)!.innerHTML = '';
+        }
         this.distance_traveled[3] = cellCount;
-        let newCellName = this.ludoService.yellowHomePath[cellCount];
+        newCellName = this.ludoService.yellowHomePath[cellCount];
         document.getElementById(newCellName)!.innerHTML = this.yellow_span_ele;
         this.prev_val[3] = cellCount;
       }
       console.log(this.distance_traveled);
-      this.distance_traveled[3]=cellCount;
+      this.distance_traveled[3] = cellCount;
     }
-
   }
 }
