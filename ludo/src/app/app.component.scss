@@ -6,10 +6,8 @@
 {
   height: 750px;
   width:750px;
-  margin-left:10% ;
-  margin-top: 5%;
+  margin:0px auto;
   border:5px solid black;
-
 }
 .box_row
 {
@@ -133,13 +131,15 @@ width:750px;
   background-image: url("../star.jpg");
   background-size: contain;
   background-color: transparent;
+  backdrop-filter: blur(15px);
 }
-button{
-  height:100px;
-  width: 100px;
-  font-size: x-large;
+#button{
+  height:80px;
+  width: 80px;
+  font-size: 50px;
   text-align: center;
-  background-color: cyan;
+  align-items: center;
+  background-color: blue;
   border-radius: 40%;
   position: absolute;
   top: 40%;
@@ -152,4 +152,26 @@ button{
     width: 45px;
     float: left;
     background-size: contain;
+}
+.coin
+{
+  height: 30px;
+  width:30px;
+  //background: #F07485;
+  margin:5px;
+  border-radius: 50%;
+  box-sizing: border-box;
+  float: left;
+}
+.deepskyblue{
+  background: deepskyblue;
+}
+.indianred{
+  background: indianred;
+}
+.lightgreen{
+  background: lightgreen;
+}
+.yel{
+  background: rgb(214, 236, 84);
 }

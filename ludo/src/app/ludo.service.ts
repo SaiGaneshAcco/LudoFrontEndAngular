@@ -20,6 +20,9 @@ export class LudoService {
     "x13y7","x12y7","x11y7","x10y7","x9y6","x9y5","x9y4","x9y3","x9y2","x9y1",
     "x8y1","x7y1"
   ];
+  safeZones=[
+    "x7y2","x3y7","x2y9","x7y13","x9y14","x13y9","x14y7","x9y3"
+  ]
   blueHomePath:{[key:number]:string}={
     51:"x8y2",52:"x8y3",53:"x8y4",54:"x8y5",55:"x8y6",56:"home"
   }
@@ -34,7 +37,7 @@ export class LudoService {
   }
   constructor() { }
   diceValue(){
-    return 1+Math.floor(Math.random()*5);
+    return 1 + Math.floor(Math.random()*6);
   }
   getCellValue(num:number){
     return this.pathValues[num];
