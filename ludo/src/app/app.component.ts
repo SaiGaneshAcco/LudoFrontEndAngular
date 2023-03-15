@@ -6,9 +6,7 @@ import { LudoService } from './ludo.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(
-    private ludoService: LudoService
-  ) {}
+  constructor(private ludoService: LudoService) {}
 
   public buttonEnabled = false;
   blue_span_ele = `<div onClick="console.log('f')" style="
@@ -69,18 +67,21 @@ export class AppComponent {
   ];
 
   dice: number = 0;
+  safePoints=this.ludoService.safeZones;
   rollDice() {
     this.dice = this.ludoService.diceValue();
   }
   movePiece() {
+    console.log(this.distance_traveled);
+    this.rollDice();
     if (this.blue_turn) {
-      this.rollDice();
       console.log('Blue Dice value = ' + this.dice);
-      this.blue_turn = false;
-      this.red_turn = true;
+
       let cellName;
       if (this.dice != 6 && this.blue_current < 0) {
         document.getElementById('button')!.style.background = 'red';
+        this.blue_turn = false;
+        this.red_turn = true;
         return;
       } else if (this.dice == 6 && this.blue_current < 0) {
         this.blue_current = this.blue_start;
@@ -100,6 +101,7 @@ export class AppComponent {
           document.getElementById(cellName)!.innerHTML = '';
         }
         this.blue_current = (this.blue_current + this.dice) % 52;
+        this.killCheck(this.blue_current);
         this.distance_traveled[0] += this.dice;
         cellName = this.cellList[this.blue_current];
         console.log('blue ', cellName);
@@ -107,18 +109,20 @@ export class AppComponent {
 
         this.prev_val[0] = this.blue_current;
         document.getElementById('button')!.style.background = 'red';
+        this.blue_turn = false;
+        this.red_turn = true;
         return;
       }
     }
 
     if (this.red_turn) {
-      this.rollDice();
       let cellName;
       console.log('Red Dice value = ' + this.dice);
-      this.green_turn = true;
-      this.red_turn = false;
+
       if (this.dice != 6 && this.red_current < 0) {
         document.getElementById('button')!.style.background = 'green';
+        this.green_turn = true;
+        this.red_turn = false;
         return;
       } else if (this.dice == 6 && this.red_current < 0) {
         this.red_current = this.red_start;
@@ -139,6 +143,7 @@ export class AppComponent {
         }
 
         this.red_current = (this.red_current + this.dice) % 52;
+        this.killCheck(this.red_current);
         this.distance_traveled[1] += this.dice;
         cellName = this.cellList[this.red_current];
         console.log('red ', cellName);
@@ -146,18 +151,20 @@ export class AppComponent {
 
         this.prev_val[1] = this.red_current;
         document.getElementById('button')!.style.background = 'green';
+        this.green_turn = true;
+        this.red_turn = false;
         return;
       }
     }
 
     if (this.green_turn) {
-      this.rollDice();
       let cellName;
       console.log('Green Dice value = ' + this.dice);
-      this.yellow_turn = true;
-      this.green_turn = false;
+
       if (this.dice != 6 && this.green_current < 0) {
         document.getElementById('button')!.style.background = 'yellow';
+        this.yellow_turn = true;
+        this.green_turn = false;
         return;
       } else if (this.dice == 6 && this.green_current < 0) {
         this.green_current = this.green_start;
@@ -178,24 +185,28 @@ export class AppComponent {
         }
 
         this.green_current = (this.green_current + this.dice) % 52;
+        this.killCheck(this.green_current);
         this.distance_traveled[2] += this.dice;
+
         cellName = this.cellList[this.green_current];
         console.log('green ', cellName);
         document.getElementById(cellName)!.innerHTML = this.green_span_ele;
 
         this.prev_val[2] = this.green_current;
         document.getElementById('button')!.style.background = 'yellow';
+        this.yellow_turn = true;
+        this.green_turn = false;
         return;
       }
     }
     if (this.yellow_turn) {
-      this.rollDice();
       let cellName;
       console.log('Yellow Dice value = ' + this.dice);
-      this.yellow_turn = false;
-      this.blue_turn = true;
+
       if (this.dice != 6 && this.yellow_current < 0) {
         document.getElementById('button')!.style.background = 'blue';
+        this.yellow_turn = false;
+        this.blue_turn = true;
         return;
       } else if (this.dice == 6 && this.yellow_current < 0) {
         this.yellow_current = this.yellow_start;
@@ -216,14 +227,17 @@ export class AppComponent {
         }
 
         this.yellow_current = (this.yellow_current + this.dice) % 52;
+        this.killCheck(this.yellow_current);
         this.distance_traveled[3] += this.dice;
         cellName = this.cellList[this.yellow_current];
         console.log('yellow ', cellName);
         document.getElementById(cellName)!.innerHTML = this.yellow_span_ele;
 
         this.prev_val[3] = this.yellow_current;
-        console.log(this.distance_traveled);
+
         document.getElementById('button')!.style.background = 'blue';
+        this.yellow_turn = false;
+        this.blue_turn = true;
         return;
       }
     }
@@ -233,6 +247,8 @@ export class AppComponent {
     if (c == 0) {
       let cellCount = this.distance_traveled[0] + dice;
       let newCellName;
+      this.blue_turn = false;
+      this.red_turn = true;
       if (cellCount > 56) {
         document.getElementById('button')!.style.background = 'red';
         return;
@@ -264,6 +280,8 @@ export class AppComponent {
     if (c == 1) {
       let cellCount = this.distance_traveled[1] + dice;
       let newCellName;
+      this.green_turn = true;
+      this.red_turn = false;
       if (cellCount > 56) {
         document.getElementById('button')!.style.background = 'green';
         return;
@@ -294,6 +312,8 @@ export class AppComponent {
     if (c == 2) {
       let cellCount = this.distance_traveled[2] + dice;
       let newCellName;
+      this.yellow_turn = true;
+      this.green_turn = false;
       if (cellCount > 56) {
         return;
       } else if (cellCount == 56) {
@@ -322,6 +342,8 @@ export class AppComponent {
       return;
     }
     if (c == 3) {
+      this.yellow_turn = false;
+      this.blue_turn = true;
       let cellCount = this.distance_traveled[3] + dice;
       let newCellName;
       if (cellCount > 56) {
@@ -351,6 +373,117 @@ export class AppComponent {
       console.log(this.distance_traveled);
       this.distance_traveled[3] = cellCount;
       document.getElementById('button')!.style.background = 'red';
+      return;
+    }
+  }
+
+  killCheck(newIdx: number) {
+    if (this.blue_turn) {
+      if (this.green_current == newIdx) {
+        if(this.safePoints.includes(this.green_current)||this.distance_traveled[2]>50){
+          return ;
+        }
+        this.green_current = -1;
+        this.distance_traveled[2] = 0;
+        this.prev_val[2] = -1;
+      }
+      if (this.red_current == newIdx) {
+        if(this.safePoints.includes(this.red_current)||this.distance_traveled[1]>50){
+          return ;
+        }
+        this.red_current = -1;
+        this.distance_traveled[1] = 0;
+        this.prev_val[1] = -1;
+      }
+      if (this.yellow_current == newIdx) {
+        if(this.safePoints.includes(this.yellow_current)||this.distance_traveled[3]>50){
+          return ;
+        }
+        this.yellow_current = -1;
+        this.distance_traveled[3] = 0;
+        this.prev_val[3] = -1;
+      }
+      return;
+    }
+    if (this.green_turn) {
+      if (this.blue_current == newIdx) {
+        if(this.safePoints.includes(this.blue_current)||this.distance_traveled[0]>50){
+          return ;
+        }
+        this.blue_current = -1;
+        this.distance_traveled[0] = 0;
+        this.prev_val[0] = -1;
+      }
+      if (this.red_current == newIdx) {
+        if(this.safePoints.includes(this.red_current)||this.distance_traveled[2]>50){
+          return ;
+        }
+        this.red_current = -1;
+        this.distance_traveled[1] = 0;
+        this.prev_val[1] = -1;
+      }
+      if (this.yellow_current == newIdx) {
+        if(this.safePoints.includes(this.yellow_current)||this.distance_traveled[3]>50){
+          return ;
+        }
+        this.yellow_current = -1;
+        this.distance_traveled[3] = 0;
+        this.prev_val[3] = -1;
+      }
+      return;
+    }
+    if (this.red_turn) {
+      if (this.green_current == newIdx) {
+        if(this.safePoints.includes(this.green_current)||this.distance_traveled[2]>50){
+          return ;
+        }
+        this.green_current = -1;
+        this.distance_traveled[2] = 0;
+        this.prev_val[2] = -1;
+      }
+      if (this.blue_current == newIdx) {
+        if(this.safePoints.includes(this.blue_current)||this.distance_traveled[0]>50){
+          return ;
+        }
+        this.blue_current = -1;
+        this.distance_traveled[0] = 0;
+        this.prev_val[0] = -1;
+      }
+      if (this.yellow_current == newIdx) {
+        if(this.safePoints.includes(this.yellow_current)||this.distance_traveled[3]>50){
+          return ;
+        }
+        this.yellow_current = -1;
+        this.distance_traveled[3] = 0;
+        this.prev_val[3] = -1;
+      }
+      return;
+    }
+    if (this.yellow_turn) {
+      if (this.green_current == newIdx) {
+        if(this.safePoints.includes(this.green_current)||this.distance_traveled[2]>50){
+          return ;
+        }
+        this.green_current = -1;
+        this.distance_traveled[2] = 0;
+        this.prev_val[2] = -1;
+      }
+      if (this.red_current == newIdx) {
+        if(this.safePoints.includes(this.red_current)||this.distance_traveled[1]>50){
+          return ;
+        }
+        this.red_current = -1;
+        this.distance_traveled[1] = 0;
+        this.prev_val[1] = -1;
+      }
+      if (this.blue_current == newIdx) {
+        if(this.safePoints.includes(this.blue_current)||this.distance_traveled[0]>50){
+          return ;
+        }
+        this.blue_current = -1;
+        this.distance_traveled[0] = 0;
+        this.prev_val[0] = -1;
+      }
       return;
     }
   }
